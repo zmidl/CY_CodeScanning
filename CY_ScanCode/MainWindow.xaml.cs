@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
@@ -12,14 +13,7 @@ namespace CY_ScanCode
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		public MainWindow()
-		{
-			InitializeComponent();
-			this.DataGrid1.ItemsSource = this.Records;
-			this.Start();
-		}
-
-		public ObservableCollection<Record> Records { get; set; } = new ObservableCollection<Record>();
+		public ObservableCollection<Record> Records { get; set; }
 
 		public class Record
 		{
@@ -31,12 +25,20 @@ namespace CY_ScanCode
 			}
 		}
 
-		StringBuilder test = new StringBuilder();
-
 		StringBuilder firstCode = new StringBuilder();
 
 		StringBuilder secondCode = new StringBuilder();
+
+		public MainWindow()
+		{
+			InitializeComponent();
+			this.Records = new ObservableCollection<Record>();
+			this.DataGrid1.ItemsSource = this.Records;
+			this.Start();
+		}
+
 		
+
 		private void Start()
 		{
 			this.TextBox_BarcodeScan.Focusable = true;
@@ -54,6 +56,20 @@ namespace CY_ScanCode
 			this.TextBox_QrcodeScan.Text = string.Empty;
 		}
 
+		public void WriteTextAsCsv(string fileName, ObservableCollection<Record> records)
+		{
+			StringBuilder stringBuilder = new StringBuilder();
+
+			stringBuilder.AppendLine("扫码信息");
+
+			foreach (var record in records)
+			{
+				stringBuilder.AppendLine(record.扫码结果);
+			}
+
+			File.WriteAllText(fileName, stringBuilder.ToString());
+		}
+
 		private void Button_Start_Click(object sender, RoutedEventArgs e)
 		{
 			this.Start();
@@ -68,9 +84,9 @@ namespace CY_ScanCode
 		{
 			var code = Enum.GetName(e.Key.GetType(), e.Key);
 
-			if (code == "Return") this.TextBox_QrcodeScan.Focus();
-			
-			else firstCode.Append(code.Substring(1));
+			if (code == "Return") { this.firstCode.Remove(25, 1); this.TextBox_QrcodeScan.Focus(); this.TextBox_BarcodeScan.Text = this.firstCode.ToString(); }
+
+			else firstCode.Append(code.Substring(1) + '-');
 		}
 
 		private void TextBox_QrcodeScan_KeyDown(object sender, KeyEventArgs e)
@@ -79,6 +95,8 @@ namespace CY_ScanCode
 
 			if (code == "Return")
 			{
+				this.secondCode.Remove(25, 1);
+				this.TextBox_QrcodeScan.Text = this.secondCode.ToString();
 				if (this.firstCode.ToString() == this.secondCode.ToString())
 				{
 					var passForeground = (SolidColorBrush)this.FindResource("PassForeground");
@@ -91,11 +109,11 @@ namespace CY_ScanCode
 					this.TextBox_BarcodeScan.Clear();
 					this.TextBox_QrcodeScan.Clear();
 					this.TextBox_BarcodeScan.Focus();
-					this.Records.Add(new Record(this.firstCode.ToString()));
+					this.Records.Add(new Record(this.firstCode.Replace("-",string.Empty).ToString()));
 				}
 				else
 				{
-					var failColor= new SolidColorBrush(Colors.Red);
+					var failColor = new SolidColorBrush(Colors.Red);
 					this.TextBlock_Result.Text = "失败";
 					this.Path_Result.Data = (Geometry)this.FindResource("Fail");
 					this.Path_Result.Fill = failColor;
@@ -107,8 +125,31 @@ namespace CY_ScanCode
 				this.firstCode.Clear();
 				this.secondCode.Clear();
 			}
-			else this.secondCode.Append(code.Substring(1));
-			
+			else this.secondCode.Append(code.Substring(1)+'-');
+
+		}
+
+		private void Button_Save_Click(object sender, RoutedEventArgs e)
+		{
+			var saveFile = new System.Windows.Forms.SaveFileDialog();
+			saveFile.DefaultExt = string.Format("*.{0}", "Csv");
+			saveFile.AddExtension = true;
+			saveFile.Filter = string.Format("{0} files|*.{0}", "Csv");
+			saveFile.OverwritePrompt = true;
+			saveFile.CheckPathExists = true;
+			saveFile.FileName = DateTime.Now.ToString("yyyyMMddhhmmss");
+			if (saveFile.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+			{
+				try
+				{
+					this.WriteTextAsCsv(saveFile.FileName, this.Records);
+					MessageBox.Show("扫码信息导出成功。");
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show(ex.Message);
+				}
+			}
 		}
 	}
 }

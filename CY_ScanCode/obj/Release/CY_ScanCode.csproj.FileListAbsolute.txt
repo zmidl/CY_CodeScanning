@@ -1,0 +1,13 @@
+D:\Develop\MyProject\CY_ScanCode\CY_ScanCode\bin\Release\CY_ScanCode.exe.config
+D:\Develop\MyProject\CY_ScanCode\CY_ScanCode\bin\Release\CY_ScanCode.exe
+D:\Develop\MyProject\CY_ScanCode\CY_ScanCode\bin\Release\CY_ScanCode.pdb
+D:\Develop\MyProject\CY_ScanCode\CY_ScanCode\obj\Release\MainWindow.g.cs
+D:\Develop\MyProject\CY_ScanCode\CY_ScanCode\obj\Release\App.g.cs
+D:\Develop\MyProject\CY_ScanCode\CY_ScanCode\obj\Release\CY_ScanCode_MarkupCompile.cache
+D:\Develop\MyProject\CY_ScanCode\CY_ScanCode\obj\Release\CY_ScanCode_MarkupCompile.lref
+D:\Develop\MyProject\CY_ScanCode\CY_ScanCode\obj\Release\MainWindow.baml
+D:\Develop\MyProject\CY_ScanCode\CY_ScanCode\obj\Release\CY_ScanCode.g.resources
+D:\Develop\MyProject\CY_ScanCode\CY_ScanCode\obj\Release\CY_ScanCode.Properties.Resources.resources
+D:\Develop\MyProject\CY_ScanCode\CY_ScanCode\obj\Release\CY_ScanCode.csproj.GenerateResource.Cache
+D:\Develop\MyProject\CY_ScanCode\CY_ScanCode\obj\Release\CY_ScanCode.exe
+D:\Develop\MyProject\CY_ScanCode\CY_ScanCode\obj\Release\CY_ScanCode.pdb
