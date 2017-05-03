@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Media;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
@@ -13,6 +14,18 @@ namespace CY_ScanCode
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+
+
+		private int passedCount = 0;
+
+		private int failedCount = 0;
+
+		private StringBuilder firstCode = new StringBuilder();
+
+		private StringBuilder secondCode = new StringBuilder();
+
+		private SoundPlayer soundPlayer;
+
 		public ObservableCollection<Record> Records { get; set; }
 
 		public class Record
@@ -25,19 +38,21 @@ namespace CY_ScanCode
 			}
 		}
 
-		StringBuilder firstCode = new StringBuilder();
-
-		StringBuilder secondCode = new StringBuilder();
-
 		public MainWindow()
 		{
-			InitializeComponent();
+			this.InitializeComponent();
 			this.Records = new ObservableCollection<Record>();
 			this.DataGrid1.ItemsSource = this.Records;
+			this.InitializeSound();
 			this.Start();
 		}
 
-		
+		private void InitializeSound()
+		{
+			var path1 = Directory.GetCurrentDirectory() + @"\error.wav";
+			var path2 = Environment.CurrentDirectory + @"\error.wav";
+			this.soundPlayer = new SoundPlayer(path2);
+		}
 
 		private void Start()
 		{
@@ -54,6 +69,8 @@ namespace CY_ScanCode
 			this.TextBox_BarcodeScan.Text = string.Empty;
 			this.TextBox_Qrcode.Text = string.Empty;
 			this.TextBox_QrcodeScan.Text = string.Empty;
+
+			this.soundPlayer.Stop();
 		}
 
 		public void WriteTextAsCsv(string fileName, ObservableCollection<Record> records)
@@ -67,6 +84,19 @@ namespace CY_ScanCode
 				stringBuilder.AppendLine(record.扫码结果);
 			}
 
+			File.WriteAllText(fileName, stringBuilder.ToString());
+		}
+
+		public void WriteTextAsTxt(string fileName, ObservableCollection<Record> records)
+		{
+			StringBuilder stringBuilder = new StringBuilder();
+			stringBuilder.AppendLine($"扫码成功数:{this.passedCount}");
+			stringBuilder.AppendLine($"扫码失败数:{this.failedCount}");
+			stringBuilder.AppendLine("条码信息");
+			foreach (var record in records)
+			{
+				stringBuilder.AppendLine(record.扫码结果);
+			}
 			File.WriteAllText(fileName, stringBuilder.ToString());
 		}
 
@@ -101,6 +131,8 @@ namespace CY_ScanCode
 				{
 					var passForeground = (SolidColorBrush)this.FindResource("PassForeground");
 					this.TextBlock_Result.Text = "通过";
+					this.passedCount++;
+					this.TextBlock_Passed.Text = this.passedCount.ToString();
 					this.Path_Result.Data = (Geometry)this.FindResource("Pass");
 					this.Path_Result.Fill = passForeground;
 					this.TextBlock_Result.Foreground = passForeground;
@@ -109,32 +141,35 @@ namespace CY_ScanCode
 					this.TextBox_BarcodeScan.Clear();
 					this.TextBox_QrcodeScan.Clear();
 					this.TextBox_BarcodeScan.Focus();
-					this.Records.Add(new Record(this.firstCode.Replace("-",string.Empty).ToString()));
+					this.Records.Add(new Record(this.firstCode.Replace("-", string.Empty).ToString()));
 				}
 				else
 				{
 					var failColor = new SolidColorBrush(Colors.Red);
 					this.TextBlock_Result.Text = "失败";
+					this.failedCount++;
+					this.TextBlock_Failed.Text = this.failedCount.ToString();
 					this.Path_Result.Data = (Geometry)this.FindResource("Fail");
 					this.Path_Result.Fill = failColor;
 					this.TextBlock_Result.Foreground = failColor;
 					this.TextBox_BarcodeScan.Focusable = false;
 					this.TextBox_QrcodeScan.Focusable = false;
+					soundPlayer.PlayLooping();
 				}
 
 				this.firstCode.Clear();
 				this.secondCode.Clear();
 			}
-			else this.secondCode.Append(code.Substring(1)+'-');
+			else this.secondCode.Append(code.Substring(1) + '-');
 
 		}
 
 		private void Button_Save_Click(object sender, RoutedEventArgs e)
 		{
 			var saveFile = new System.Windows.Forms.SaveFileDialog();
-			saveFile.DefaultExt = string.Format("*.{0}", "Csv");
+			saveFile.DefaultExt = string.Format("*.{0}", "txt");
 			saveFile.AddExtension = true;
-			saveFile.Filter = string.Format("{0} files|*.{0}", "Csv");
+			saveFile.Filter = string.Format("{0} files|*.{0}", "txt");
 			saveFile.OverwritePrompt = true;
 			saveFile.CheckPathExists = true;
 			saveFile.FileName = DateTime.Now.ToString("yyyyMMddhhmmss");
@@ -142,13 +177,49 @@ namespace CY_ScanCode
 			{
 				try
 				{
-					this.WriteTextAsCsv(saveFile.FileName, this.Records);
+					this.WriteTextAsTxt(saveFile.FileName, this.Records);
 					MessageBox.Show("扫码信息导出成功。");
 				}
 				catch (Exception ex)
 				{
 					MessageBox.Show(ex.Message);
 				}
+			}
+		}
+
+		private void Button_Clear_Click(object sender, RoutedEventArgs e)
+		{
+			this.failedCount = 0;
+			this.passedCount = 0;
+			this.TextBlock_Failed.Text = this.failedCount.ToString();
+			this.TextBlock_Passed.Text = this.passedCount.ToString();
+		}
+
+		private void Button_Min_Click(object sender, RoutedEventArgs e)
+		{
+			this.WindowState = WindowState.Minimized;
+		}
+
+		private void Button_Max_Click(object sender, RoutedEventArgs e)
+		{
+			if (this.WindowState == WindowState.Normal)
+			{
+				this.WindowState = WindowState.Maximized;
+				this.Button_Max.Content = this.FindResource("Path_Nor");
+			}
+			else if (this.WindowState == WindowState.Maximized)
+			{
+				this.WindowState = WindowState.Normal;
+
+				this.Button_Max.Content = this.FindResource("Path_Max");
+			}
+		}
+
+		private void DockPanel_MouseMove(object sender, MouseEventArgs e)
+		{
+			if (e.LeftButton == MouseButtonState.Pressed)
+			{
+				this.DragMove();
 			}
 		}
 	}

@@ -5,10 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CY_ScanCode"
         mc:Ignorable="d"
-        WindowStyle="None"
-        ResizeMode="NoResize"
+        WindowStyle="None" 
         WindowStartupLocation="CenterScreen"
-        Title="MainWindow" Height="768" Width="1024">
+        Height="768" Width="1024" Background="{x:Null}" ResizeMode="NoResize">
     <Window.Resources>
         <SolidColorBrush x:Key="PassForeground" Color="#FF00BB00"/>
         <SolidColorBrush x:Key="PressedForeground" Color="#FF35AAF7"/>
@@ -28,10 +27,11 @@
 
         <DropShadowEffect x:Key="IconEffect" BlurRadius="8" ShadowDepth="3"/>
 
-        
 
-        <Path x:Key="Path_Exit" Fill="{Binding ElementName=Button_Exit,Path=Foreground}" Data="M13.46,12L19,17.54V19H17.54L12,13.46L6.46,19H5V17.54L10.54,12L5,6.46V5H6.46L12,10.54L17.54,5H19V6.46L13.46,12Z"  Stretch="Uniform" Width="50" Height="50" Margin="25,25,0,0"/>
-
+        <Path x:Key="Path_Min" Fill="{Binding ElementName=Button_Min,Path=Foreground}" Data="M20,14H4V10H20" Stretch="Uniform" Width="50" Height="50" Margin="25,25,0,0"/>
+        <Path x:Key="Path_Exit" Fill="{Binding ElementName=Button_Exit,Path=Foreground}" Data="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"  Stretch="Uniform" Width="50" Height="50" Margin="25,25,0,0"/>
+        <Path x:Key="Path_Max" Fill="{Binding ElementName=Button_Max,Path=Foreground}" Data="M4,4H20V20H4V4M6,8V18H18V8H6Z" Stretch="Uniform" Width="50" Height="50" Margin="25,25,0,0"/>
+        <Path x:Key="Path_Nor" Fill="{Binding ElementName=Button_Max,Path=Foreground}" Data="M4,8H8V4H20V16H16V20H4V8M16,8V14H18V6H10V8H16M6,12V18H14V12H6Z" Stretch="Uniform" Width="50" Height="50" Margin="25,25,0,0"/>
 
         <LinearGradientBrush x:Key="RectangleContainerBackground" EndPoint="0.5,1" StartPoint="0.5,0">
             <GradientStop Color="#FF3E3E3E"/>
@@ -54,6 +54,7 @@
         <PathGeometry x:Key="Reday" Figures="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/>
         <PathGeometry x:Key="Scan" Figures="M2,4H6V2H2A2,2 0 0,0 0,4V8H2V4M22,2H18V4H22V8H24V4A2,2 0 0,0 22,2M2,16H0V20A2,2 0 0,0 2,22H6V20H2V16M22,20H18V22H22A2,2 0 0,0 24,20V16H22V20M4,8V16A2,2 0 0,0 6,18H18A2,2 0 0,0 20,16V8A2,2 0 0,0 18,6H6A2,2 0 0,0 4,8M6,16V12H18V16H6M18,8V10H6V8H18Z"/>
         <PathGeometry x:Key="Save" Figures="M15,9H5V5H15M12,19A3,3 0 0,1 9,16A3,3 0 0,1 12,13A3,3 0 0,1 15,16A3,3 0 0,1 12,19M17,3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V7L17,3Z"/>
+        <PathGeometry x:Key="Clear" Figures="M19.36,2.72L20.78,4.14L15.06,9.85C16.13,11.39 16.28,13.24 15.38,14.44L9.06,8.12C10.26,7.22 12.11,7.37 13.65,8.44L19.36,2.72M5.93,17.57C3.92,15.56 2.69,13.16 2.35,10.92L7.23,8.83L14.67,16.27L12.58,21.15C10.34,20.81 7.94,19.58 5.93,17.57Z"/>
 
         <Style x:Key="RD_EllipseButtonStyle" TargetType="{x:Type Button}">
             <Style.Resources>
@@ -404,53 +405,73 @@
             </Setter>
         </Style>
     </Window.Resources>
-    <Grid Background="{StaticResource BodyBackground}">
-        <Rectangle Fill="{StaticResource RectangleContainerBackground}" Width="1000" Height="670" Margin="0,70,0,0" RadiusX="10" RadiusY="10" StrokeThickness="2" Stroke="{StaticResource RectangleContainerStroke}"/>
-        <DockPanel  VerticalAlignment="Top" Background="{StaticResource TitleBackground}" Height="70"  >
-            <TextBlock Effect="{StaticResource IconEffect}" FontSize="52" FontWeight="Bold" HorizontalAlignment="Left" Margin="10,0,0,0" Text="CY一维码、二维码生成与管理系统" Foreground="{StaticResource PressedForeground}" />
-            <Button  x:Name="Button_Exit" Style="{StaticResource RD_EllipseButtonStyle}" Content="{StaticResource Path_Exit}"  Width="55" Height="55"  Margin="0,8,20,0" HorizontalAlignment="Right" FontSize="100" Click="Button_Exit_Click" />
-        </DockPanel>
-        <Rectangle Fill="{StaticResource MainViewTitleLine}" VerticalAlignment="Top" Width="1024" Height="5" Margin="0,70,0,0" />
-        <StackPanel Orientation="Vertical" Margin="80,120,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
-            <StackPanel Orientation="Horizontal" >
-                <Path x:Name="Path_Result" Effect="{StaticResource IconEffect}" Data="{StaticResource Pass}" Stretch="Fill" Fill="{StaticResource TextForeground}" Width="140" Height="140"/>
-                <TextBlock x:Name="TextBlock_Result" Effect="{StaticResource IconEffect}" Width="250" Text="通过" FontSize="100" Margin="20,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource TextForeground}"/>
-                <StackPanel Orientation="Vertical"  Margin="20,10,0,0">
-                    <Button x:Name="Button_Start" Style="{StaticResource RD_ButtonStyle}" Width="190" Height="60"  RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Click="Button_Start_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <Path Fill="{Binding ElementName=TextBlock_Start,Path=Foreground}" Stretch="Fill" Width="30" Height="30" Data="{StaticResource Scan}"/>
-                            <TextBlock x:Name="TextBlock_Start" Margin="15,0,0,0" Text="开始" FontSize="30"/>
-                        </StackPanel>
-                    </Button>
-                    <Button x:Name="Button_Save" Style="{StaticResource RD_ButtonStyle}" Width="190" Height="60" Margin="0,10,0,0"  RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Click="Button_Save_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <Path Fill="{Binding ElementName=TextBlock_Save,Path=Foreground}" Stretch="Fill" Width="30" Height="30" Data="{StaticResource Save}"/>
-                            <TextBlock x:Name="TextBlock_Save" Margin="15,0,0,0" Text="保存" FontSize="30"/>
-                        </StackPanel>
-                    </Button>
+    <Viewbox Stretch="Fill">
+        <Grid Width="1024" Height="770" Background="{StaticResource BodyBackground}">
+            <Rectangle Fill="{StaticResource RectangleContainerBackground}" Width="1000" Height="670" Margin="0,70,0,0" RadiusX="10" RadiusY="10" StrokeThickness="2" Stroke="{StaticResource RectangleContainerStroke}"/>
+            <DockPanel  VerticalAlignment="Top" Background="{StaticResource TitleBackground}" Height="70"  MouseMove="DockPanel_MouseMove">
+
+                <Button  x:Name="Button_Exit" Style="{StaticResource RD_EllipseButtonStyle}" Content="{StaticResource Path_Exit}" DockPanel.Dock="Right" Margin="0,2,20,2" FontSize="100" Click="Button_Exit_Click" />
+                <Button x:Name="Button_Max" Style="{StaticResource RD_EllipseButtonStyle}" Content="{StaticResource Path_Max}"  DockPanel.Dock="Right" Margin="0,2,10,2" Click="Button_Max_Click"/>
+                <Button x:Name="Button_Min" Style="{StaticResource RD_EllipseButtonStyle}" Content="{StaticResource Path_Min}"  DockPanel.Dock="Right" Margin="0,2,10,2" Click="Button_Min_Click"/>
+
+                <TextBlock Effect="{StaticResource IconEffect}" FontSize="50" FontWeight="Bold" HorizontalAlignment="Left" Margin="10,2,0,0" Text="CY-条形码管理与生成系统" Foreground="{StaticResource PressedForeground}" />
+
+            </DockPanel>
+            <Rectangle Fill="{StaticResource MainViewTitleLine}" VerticalAlignment="Top" Width="1024" Height="5" Margin="0,70,0,0" />
+            <StackPanel Orientation="Vertical" Margin="80,120,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <StackPanel Orientation="Horizontal" >
+                    <Path x:Name="Path_Result" Effect="{StaticResource IconEffect}" Data="{StaticResource Pass}" Stretch="Fill" Fill="{StaticResource TextForeground}" Width="140" Height="140"/>
+                    <TextBlock x:Name="TextBlock_Result" Effect="{StaticResource IconEffect}" Width="200" Text="通过" FontSize="100" Margin="20,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource TextForeground}"/>
+                    <StackPanel Orientation="Vertical"  Margin="40,0,0,0">
+                        <Button x:Name="Button_Start" Style="{StaticResource RD_ButtonStyle}" Width="230" Height="65"  RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Click="Button_Start_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Fill="{Binding ElementName=TextBlock_Start,Path=Foreground}" Stretch="Fill" Width="30" Height="30" Data="{StaticResource Scan}"/>
+                                <TextBlock x:Name="TextBlock_Start" Margin="15,0,0,0" Text="开始" FontSize="30"/>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="Button_Save" Style="{StaticResource RD_ButtonStyle}" Width="230" Height="65" Margin="0,10,0,0"  RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Click="Button_Save_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Fill="{Binding ElementName=TextBlock_Save,Path=Foreground}" Stretch="Fill" Width="30" Height="30" Data="{StaticResource Save}"/>
+                                <TextBlock x:Name="TextBlock_Save" Margin="15,0,0,0" Text="保存" FontSize="30"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,30,0,0">
+                    <Path Effect="{StaticResource IconEffect}" Width="60" Height="60" Stretch="Fill" Fill="{StaticResource TextForeground2}" Data="{StaticResource BarcodeScan}"/>
+                    <TextBox x:Name="TextBox_BarcodeScan" CaretBrush="Black" Style="{StaticResource RD_TextBoxStyle}" Margin="20,0,0,0" FontSize="40" Width="550" Height="80" KeyDown="TextBox_BarcodeScan_KeyDown" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,25,0,0">
+                    <Path Effect="{StaticResource IconEffect}" Width="60" Height="60" Stretch="Fill" Fill="{StaticResource TextForeground2}" Data="{StaticResource  QrcodeScan}"/>
+                    <TextBox x:Name="TextBox_QrcodeScan" CaretBrush="Black" Style="{StaticResource RD_TextBoxStyle}" Margin="20,0,0,0" FontSize="40" Text="" Width="550" Height="80" KeyDown="TextBox_QrcodeScan_KeyDown"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,50,0,0">
+                    <Path Effect="{StaticResource IconEffect}" Width="50" Height="50" Stretch="Fill" Fill="{StaticResource TextForeground2}" Data="{StaticResource  Barcode}"/>
+                    <TextBox x:Name="TextBox_Barcode" Style="{StaticResource RD_TextBoxStyle}" Focusable="False" Margin="30,0,0,0" FontSize="40" Text="" Width="550" Height="80" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,25,0,0">
+                    <Path Effect="{StaticResource IconEffect}" Width="50" Height="50" Stretch="Fill" Fill="{StaticResource TextForeground2}" Data="{StaticResource  Qrcode}"/>
+                    <TextBox x:Name="TextBox_Qrcode" Style="{StaticResource RD_TextBoxStyle}" Focusable="False" Margin="30,0,0,0" FontSize="40" Text="" Width="550" Height="80" />
                 </StackPanel>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,30,0,0">
-                <Path Effect="{StaticResource IconEffect}" Width="60" Height="60" Stretch="Fill" Fill="{StaticResource TextForeground2}" Data="{StaticResource BarcodeScan}"/>
-                <TextBox x:Name="TextBox_BarcodeScan" CaretBrush="Black" Style="{StaticResource RD_TextBoxStyle}" Margin="20,0,0,0" FontSize="40" Width="550" Height="80" KeyDown="TextBox_BarcodeScan_KeyDown" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,25,0,0">
-                <Path Effect="{StaticResource IconEffect}" Width="60" Height="60" Stretch="Fill" Fill="{StaticResource TextForeground2}" Data="{StaticResource  QrcodeScan}"/>
-                <TextBox x:Name="TextBox_QrcodeScan" CaretBrush="Black" Style="{StaticResource RD_TextBoxStyle}" Margin="20,0,0,0" FontSize="40" Text="" Width="550" Height="80" KeyDown="TextBox_QrcodeScan_KeyDown"/>
+            <StackPanel Effect="{StaticResource IconEffect}" Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,120,60,0" Background="Black"  >
+
+                <DataGrid x:Name="DataGrid1" IsReadOnly="True" ColumnWidth="210" Style="{StaticResource RD_DataGridBlackStyle}" Width="230" Height="500" RenderTransformOrigin="0.5,0.5" Margin="4"/>
+                <StackPanel Orientation="Horizontal">
+                    <Path Margin="20,0,0,0" Width="36" Stretch="Uniform" Fill="{StaticResource PassForeground}" Data="{StaticResource Pass}" />
+                    <TextBlock x:Name="TextBlock_Passed" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource PassForeground}" FontWeight="Bold" Width="110" Text="0" FontSize="30"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                    <Path Margin="20,0,0,0" Width="36" Stretch="Uniform" Fill="Red" Data="{StaticResource Fail}" />
+                    <TextBlock x:Name="TextBlock_Failed" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="Red" Width="110" Text="0" FontWeight="Bold" FontSize="30"/>
+                </StackPanel>
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal" Margin="0,50,0,0">
-                <Path Effect="{StaticResource IconEffect}" Width="50" Height="50" Stretch="Fill" Fill="{StaticResource TextForeground2}" Data="{StaticResource  Barcode}"/>
-                <TextBox x:Name="TextBox_Barcode" Style="{StaticResource RD_TextBoxStyle}" Focusable="False" Margin="30,0,0,0" FontSize="40" Text="" Width="550" Height="80" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,25,0,0">
-                <Path Effect="{StaticResource IconEffect}" Width="50" Height="50" Stretch="Fill" Fill="{StaticResource TextForeground2}" Data="{StaticResource  Qrcode}"/>
-                <TextBox x:Name="TextBox_Qrcode" Style="{StaticResource RD_TextBoxStyle}" Focusable="False" Margin="30,0,0,0" FontSize="40" Text="" Width="550" Height="80" />
-            </StackPanel>
-        </StackPanel>
-        <StackPanel Effect="{StaticResource IconEffect}" Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,130,60,0" Background="Black"  >
-            <DataGrid x:Name="DataGrid1" IsReadOnly="True" ColumnWidth="210" Style="{StaticResource RD_DataGridBlackStyle}" Width="230" Height="580" RenderTransformOrigin="0.5,0.5" Margin="2"/>
-        </StackPanel>
-        <Rectangle Width="570" Height="220" HorizontalAlignment="Left" Margin="150,0,0,0" Fill="Transparent"/>
-    </Grid>
+            <Button x:Name="Button_Clear" Style="{StaticResource RD_ButtonStyle}" Margin="901,626,65,59" Click="Button_Clear_Click">
+                <Path Fill="{StaticResource TextForeground2}" Stretch="Uniform" Width="40" Data="{StaticResource Clear}"/>
+            </Button>
+            <Rectangle Width="570" Height="220" HorizontalAlignment="Left" Margin="150,0,0,0" Fill="Transparent"/>
+        </Grid>
+    </Viewbox>
 </Window>
